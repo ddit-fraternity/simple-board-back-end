@@ -1,0 +1,25 @@
+{
+    "properties" : 
+    [
+        {
+            "name" : "mybatis.configuration.db1.jdbc-type-for-null",
+            "type" : "java.lang.String",
+            "description" : "A description for 'mybatis.configuration.db1.jdbc-type-for-null'"
+        },
+        {
+            "name" : "mybatis.configuration.db1.map-underscore-to-camel-case",
+            "type" : "java.lang.String",
+            "description" : "A description for 'mybatis.configuration.db1.map-underscore-to-camel-case'"
+        },
+        {
+            "name" : "mybatis.configuration.db1.use-column-label",
+            "type" : "java.lang.String",
+            "description" : "A description for 'mybatis.configuration.db1.use-column-label'"
+        },
+        {
+            "name" : "mybatis.configuration.db1.default-statemet-timeout",
+            "type" : "java.lang.String",
+            "description" : "A description for 'mybatis.configuration.db1.default-statemet-timeout'"
+        }
+    ]
+}
