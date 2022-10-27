@@ -17,7 +17,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	implementation 'io.springfox:springfox-boot-starter:3.0.0' // Swagger
+	implementation 'org.projectlombok:lombok' // lombk
 }
+
 
 tasks.named('test') {
 	useJUnitPlatform()

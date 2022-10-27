@@ -21,6 +21,8 @@ spring:
 
     mvc:
         static-path-pattern: /static/**
+        pathmatch:
+            matching-strategy: "ANT_PATH_MATCHER" #Swagger 사용으로 인해 추가
     web:    
         resources:
             static-locations: classpath:/static/

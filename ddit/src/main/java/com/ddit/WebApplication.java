@@ -19,7 +19,7 @@ public class WebApplication extends SpringBootServletInitializer implements WebA
     static {
         System.setProperty("spring.config.location", "classpath:/config/application.yml,classpath:/config/project.yml");
     }
-
+    
     public static void main(String[] args) {
         SpringApplication.run(WebApplication.class, args);
     }
