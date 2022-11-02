@@ -32,7 +32,7 @@ public class SampleController {
     })
     @GetMapping("/sample/{id}/{pw}")
     @ResponseBody
-    public ResponseEntity<String> sample(@PathVariable(required = true) String id, 
+    public ResponseEntity<String> sampleGet(@PathVariable(required = true) String id, 
     									@PathVariable String pw, 
     									HttpServletRequest request, HttpServletResponse response) throws Exception{
     	
