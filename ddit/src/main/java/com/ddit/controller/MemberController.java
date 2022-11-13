@@ -1,24 +1,41 @@
 package com.ddit.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jackson.JsonObjectDeserializer;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.ddit.sample.vo.UserVO;
+import com.ddit.common.security.JwtUtil;
+import com.ddit.service.MemberServiceImpl;
+import com.ddit.vo.LoginVO;
+import com.ddit.vo.UserVO;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import springfox.documentation.spring.web.json.Json;
 
-@Controller
+@RestController
 public class MemberController {
 
+	@Autowired
+	private MemberServiceImpl memberService;
+	
 	/**
 	 * <pre>
 	 * History:
@@ -38,15 +55,18 @@ public class MemberController {
         @ApiResponse(responseCode = "500", description = "SWAGGER : INTERNAL SERVER ERROR")
 	})
 	@PostMapping("/user/login")
-	public ResponseEntity<String> login(HttpServletRequest request,
+	public ResponseEntity<Map<String, String>> login(HttpServletRequest request,
 										HttpServletResponse response,
 										@RequestBody UserVO userVo){
 		
+		
 		//TODO : 자체 로그인
-		//TODO : 연동 로그인 (OAUTH)
+		Map<String, String> returnMap = memberService.login(userVo);
 		
-		return ResponseEntity.ok("");
-		
+		ResponseEntity<Map<String, String>> returnEntity = returnMap == null 
+															? new ResponseEntity<Map<String,String>>(HttpStatus.BAD_REQUEST)
+															: ResponseEntity.ok(returnMap);
+		return returnEntity;
 	}
 	
 	/**
@@ -74,6 +94,7 @@ public class MemberController {
 		
 		//TODO : 자체 로그인
 		//TODO : 연동 로그인 (OAUTH)
+		
 		
 		return ResponseEntity.ok("");
 		

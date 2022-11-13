@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.ddit.common.security.JwtUtil;
 import com.ddit.sample.vo.SampleVO;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +34,8 @@ public class SampleController {
     @GetMapping("/sample/{id}/{pw}")
     @ResponseBody
     public ResponseEntity<String> sampleGet(@PathVariable(required = true) String id, 
-    									@PathVariable String pw, 
-    									HttpServletRequest request, HttpServletResponse response) throws Exception{
+    										@PathVariable String pw, 
+    										HttpServletRequest request, HttpServletResponse response) throws Exception{
     	
         return ResponseEntity.ok("id : " + id + " & pw : " + pw);
     }
@@ -50,7 +51,9 @@ public class SampleController {
     	@ApiResponse(responseCode = "500", description = "SWAGGER : INTERNAL SERVER ERROR"),
     })
     @PostMapping("/sample/login")
-    public ResponseEntity<String> samplePost(HttpServletRequest request, HttpServletResponse response, @RequestBody SampleVO sampleVo) throws Exception{
+    public ResponseEntity<String> samplePost(HttpServletRequest request, 
+											HttpServletResponse response, 
+											@RequestBody SampleVO sampleVo) throws Exception{
     	
     	// 패스워드 맞는지
     	sampleVo.getUserPw();
@@ -58,6 +61,30 @@ public class SampleController {
     	// 토큰 생성
     	return ResponseEntity.ok(sampleVo.getUserEmail());
     }
+    
+    @Operation(summary = "sample", description = "this is sample")
+    @ApiResponses({
+    	@ApiResponse(responseCode = "200", description = "SWAGGER : PASSED"),
+    	@ApiResponse(responseCode = "400", description = "SWAGGER : BAD REQUEST"),
+    	@ApiResponse(responseCode = "404", description = "SWAGGER : NOT FOUND"),
+    	@ApiResponse(responseCode = "500", description = "SWAGGER : INTERNAL SERVER ERROR"),
+    })
+    @GetMapping("/sample/test/{id}/{email}")
+    public ResponseEntity<String> testAPI(HttpServletRequest request, 
+    		HttpServletResponse response, 
+    		@PathVariable String id,
+    		@PathVariable String email) throws Exception{
+    	
+    	var tp = new JwtUtil();
+    	
+    	String s = tp.createAuthToken();
+    	
+    	System.out.println("SampleCntrler :: GET JWT ::  " + s);
+    	
+    	// 토큰 생성
+    	return ResponseEntity.ok(s);
+    }
+    
     
     // Get		Read 		@GetMapping	
     // Post		Create 		@PostMapping

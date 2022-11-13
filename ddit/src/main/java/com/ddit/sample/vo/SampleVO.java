@@ -14,5 +14,5 @@ public class SampleVO {
 
     @ApiParam(value = "name", required = false)
     private String userName;
-
+    
 }

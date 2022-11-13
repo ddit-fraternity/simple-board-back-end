@@ -1,8 +1,11 @@
 package com.ddit.common.security;
 
-import java.time.Duration;
+import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Header;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -18,28 +21,76 @@ import io.jsonwebtoken.SignatureAlgorithm;
  * @comments JWT 토큰 발급 클래스
  * 
  */
-public class TokenProvider {
+public class JwtUtil {
 	
-	private String 				signSecretKey 			= "secreto";
-	private SignatureAlgorithm 	encryptionAlgorithm 	= SignatureAlgorithm.HS256;
-	private long 				tokenExpireTime 		= 1000L * 60 * 30;			// 30분
+	private String				secretKey					= "secret";	// 비밀키
+//	private String 				base64EncodedSecretKey 		= Base64.getUrlEncoder().encode(secretKey.getBytes()).toString();
+	private SignatureAlgorithm 	encryptionAlgorithm 		= SignatureAlgorithm.HS256;	// 대칭키 해싱 알고리즘 (비공개키)
+	private long 				refreshTokenExpireTime 			= 1000L * 60 * 60;			// 1시간
+	private long 				AuthTokenExpireTime 			= 1000L * 60 * 60 * 24;		// 하루
 	
-	public String makeJwtToken(String userEmail, String userID) {
+//	private SignatureAlgorithm	encryptionAlgorithm			= SignatureAlgorithm.RS256; // 비대칭키 해싱 알고리즘 (공개키 - 비공개키)
+	
+	
+	public String createRefreshToken(String userEmail) {
 		
 		Date now = new Date();
 		
-		String token = Jwts.builder()
-				.setHeaderParam(Header.TYPE, Header.JWT_TYPE)								// 1. 헤더 타입(typ) 지정, JWT 사용시 Header.JWT_TYPE
-				.setIssuer("ddit")															// 2. 토큰 발행자 지정 
-				.setIssuedAt(now)															// 3. 토큰 발급 시간
-				.setExpiration(new Date(now.getTime() + tokenExpireTime))					// 4. 토큰 만료 시간
-		        .claim("id", userID)														// 5. 토큰 발행을 요청한 User의 ID 	(Claim 정보)
-		        .claim("email", userEmail)													// 6. 토큰 발행을 요청한 User의 Email (Claim 정보)
-		        .signWith(encryptionAlgorithm, signSecretKey)								// 7. 암호화 정보 (암호 알고리즘, 비밀키값)
-		        .compact();																	// 8. 토큰 발행
+		// JWT Header에 저장될 정보 생성
+		Map<String, Object> header = new HashMap<>();
+		header.put("alg", encryptionAlgorithm);
+		header.put("typ", Header.JWT_TYPE);
 		
-		System.out.println("Token Created ::::: " + token);
+		// JWT Payload에 저장될 정보객체(Claim) 모음 생성 : 사실상 Map<String, Object> 구조
+		Claims claims = Jwts.claims().setSubject("Authentication Token");
+		claims.put("email", userEmail);
+		claims.put("iss", "ddit");
+		claims.setIssuedAt(now);
+		claims.setExpiration(new Date(now.getTime() + refreshTokenExpireTime));
+		
+//		String token = Jwts.builder()
+//				.setHeaderParam(Header.TYPE, Header.JWT_TYPE)								// 1. 헤더 타입(typ) 지정, JWT 사용시 Header.JWT_TYPE
+//				.setIssuer("ddit")															// 2. 토큰 발행자 지정 
+//				.setIssuedAt(now)															// 3. 토큰 발급 시간
+//				.setExpiration(new Date(now.getTime() + tokenExpireTime))					// 4. 토큰 만료 시간
+//		        .claim("id", userID)														// 5. 토큰 발행을 요청한 User의 ID 	(Claim 정보)
+//		        .claim("email", userEmail)													// 6. 토큰 발행을 요청한 User의 Email (Claim 정보)
+//		        .signWith(encryptionAlgorithm, signSecretKey)								// 7. 암호화 정보 (암호 알고리즘, 비밀키값)
+//		        .compact();																	// 8. 토큰 발행
+		
+		String token = Jwts.builder()
+				.setHeader(header)
+				.setClaims(claims)
+				.signWith(encryptionAlgorithm, secretKey)
+				.compact();
+		
+		System.out.println("TokenProvider :: Refresh Token Created :: [" + userEmail + "] :: " + token);
+		
 		return token;
+	}
+	
+	public String createAuthToken() {
+		
+		Date now = new Date();
+		
+		Map<String, Object> header = new HashMap<>();
+		header.put("alg", encryptionAlgorithm);
+		header.put("typ", Header.JWT_TYPE);
+		
+		Claims claims = Jwts.claims().setSubject("Authentication Token");
+		claims.put("iss", "ddit");
+		claims.setIssuedAt(now);
+		claims.setExpiration(new Date(now.getTime() + AuthTokenExpireTime));
+		
+		String token = Jwts.builder()
+				.setHeader(header)
+				.setClaims(claims)
+				.signWith(encryptionAlgorithm, secretKey)
+				.compact();
+		
+		System.out.println("TokenProvider :: Auth Token Created :: " + token);
+		
+		return null;
 	}
 }
 
@@ -58,6 +109,10 @@ public class TokenProvider {
  * 		- 토큰의 헤더에는 alg와 typ 두 가지 정보로 구성된다.
  * 	  	  alg는 Signature를 해싱하기 위한 알고리즘 정보
  *    	  typ은 토큰의 타입정보 ex. JWT
+ * 	
+ * 		- 해시 알고리즘은 HS256(HMAC with SHA-256) 또는 RS256(RSA Signature with SHA-256) 방식 사용
+ * 		  HS256은 대칭키 방식으로, 비밀키를 알아야만 검증 가능하므로 검증 주체가 일부로 한정됨.
+ * 		  RS256은 비대칭키 방식으로, 공개키로 검증 가능하므로 JWT를 받아서 사용하는 어떤 주체라도 Signature 검증이 가능
  * 
  * 		※ Header 예시
  * 			{
