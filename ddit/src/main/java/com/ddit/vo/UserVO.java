@@ -1,12 +1,12 @@
-package com.ddit.sample.vo;
+package com.ddit.vo;
 
 import io.swagger.annotations.ApiParam;
 import lombok.Data;
 
-@Data // lombok이 자동으로 getter, setter를 내부적으로 생성해준다.
-public class SampleVO {
+@Data
+public class UserVO {
 
-    @ApiParam(value = "email", required = true) // swagger를 위한 설정
+    @ApiParam(value = "email", required = true)
     private String userEmail;
 
     @ApiParam(value = "password", required = true)
@@ -14,5 +14,4 @@ public class SampleVO {
 
     @ApiParam(value = "name", required = false)
     private String userName;
-    
 }

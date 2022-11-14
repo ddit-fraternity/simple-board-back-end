@@ -13,7 +13,7 @@ public class WebApplication extends SpringBootServletInitializer {
     
     /**
      * Configuration File Setting
-     * - BaseApplicationTests.java에도 동일하게 설정해야 합니다.
+     * - BaseApplicationTests.java에도 동일하게 설정해야 합니다. jjh
      */
     static {
         System.setProperty("spring.config.location", "classpath:/config/application.yml");
