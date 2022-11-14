@@ -1,44 +1,45 @@
 spring:
-    profiles:
-        active: localgroup
-
----
-
-spring:
-    profiles:
-        group:
-            localgroup: common, local
-
----
-
-##########################################profiles : common
-spring:
     thymeleaf:
         enabled: false
     servlet:
         multipart:
             enabled : false
-
     mvc:
         static-path-pattern: /static/**
         pathmatch:
-            matching-strategy: "ANT_PATH_MATCHER" #Swagger 사용으로 인해 추가
+            matching-strategy: ant-path-matcher #Swagger 사용으로 인해 추가
     web:    
         resources:
             static-locations: classpath:/static/
             add-mappings: true
-    config:
-        activate:
-            on-profile: common
-
-mybatis:
-    configuration:
-        db1:
-            map-underscore-to-camel-case: true
-            use-column-label : true
-            default-statemet-timeout: 25000
-            jdbc-type-for-null : 'NULL'
-
-server:
-    tomcat:
-        additional-tld-skip-patterns: "serializer.jar"
+    H2:
+        console:
+            enabled: true # H2 Console을 사용할지 여부 (H2 Console은 H2 Database를 UI로 제공해주는 기능)
+            path: /H2-console # H2 Console의 Path
+    datasource: 
+        driver-class-name: org.h2.Driver # database를 H2로 설정
+        url: jdbc:h2:~/test # H2 접속 정보
+        username: test # H2 접속 시 입력할 username 정보 (원하는 것으로 입력)
+        password: test # H2 접속 시 입력할 password 정보 (원하는 것으로 입력)
+    jpa:
+        hibernate:
+            ddl-auto: create 
+            # option type       : create, create-drop, update, validate, none
+            # create            : 어플리케이션 실행 시 테이블을 모두 제거하고 다시 생성합니다.
+            # create-drop       : 어플리케이션 실행 시 테이블을 모두 제거하고 다시 생성합니다. 그리고 어플리케이션 종료 시점에 테이블은 모두 제거합니다.
+            # update            : 어플리케이션 실행 시 변경점만 반영됩니다.
+            # validate          : 현제 테이블 정보가 entity에 정의된 내용과 동일한지 체크합니다. 다를 경우 경고를 출력하며 어플리케이션을 실행하지 않습니다.
+            # none              : 자동생성을 하지 않습니다.
+        properties:
+            hibernate:
+                diarect: org.hibernate.dialect.H2Dialect    # 쿼리의 기준이 되는 데이터베이스 엔진을 설정합니다.
+                show-sql : true                             # sql 쿼리를 보여줍니다.
+                format-sql : true                           # sql query formatting
+                use-sql-comments: true                      # sql 쿼리의 추가정보를 보여줍니다.
+logging:
+    level:
+        org:
+            hibernate:
+                type:
+                    descriptor:
+                        sql : trace ## query에 ?에 어떤 값이 들어가는지 추적할 수 있는 설정
