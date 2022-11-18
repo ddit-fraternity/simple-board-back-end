@@ -33,10 +33,10 @@ public class Board {
     private Long boardViews;
 
     @Column(name = "create_at", nullable = false)
-    private Date createAt;
+    private String createAt;
     
     @Column(name = "update_at", nullable = false)
-    private Date updateAt;
+    private String updateAt;
 
     @ManyToOne(targetEntity = Users.class)
     @JoinColumn(name = "user_id")
