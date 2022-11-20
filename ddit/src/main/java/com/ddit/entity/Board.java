@@ -11,9 +11,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.Data;
-
-@Data
 @Entity // 객체와 테이블 매핑
 @Table(name = "BOARD") // 테이블 지정
 public class Board {

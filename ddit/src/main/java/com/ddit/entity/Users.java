@@ -7,9 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-import lombok.Data;
-
-@Data
 @Entity // 객체와 테이블 매핑
 @Table(name = "USERS") // 테이블 지정
 public class Users {
